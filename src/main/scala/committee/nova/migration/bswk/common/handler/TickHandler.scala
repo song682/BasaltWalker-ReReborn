@@ -18,6 +18,7 @@ class TickHandler {
     if (event.isCanceled) return
     if (event.phase != Phase.END) return
     val player = event.player
+    if (player.isDead || player.getHealth <= 0.0F) return
     val radius = EnchantmentHelper.getEnchantmentLevel(CommonConfig.enchantmentBasaltWalkerId, player.getEquipmentInSlot(1)) + 2
     if (radius <= 2) return
     val world = player.worldObj
@@ -31,6 +32,7 @@ class TickHandler {
         if (!Utilities.closerToCenterThan(blockPos, player, radius)) loop.break()
         if (world.getBlock(blockPos(0), blockPos(1) + 1, blockPos(2)).getMaterial != Material.air) loop.break()
         if (world.getBlock(blockPos(0), blockPos(1), blockPos(2)).getMaterial != Material.lava) loop.break()
+        if (world.getBlockMetadata(blockPos(0), blockPos(1), blockPos(2)) != 0) loop.break()
         if (onPlayerBlockPlace(player, BlockSnapshot.getBlockSnapshot(world, blockPos(0), blockPos(1), blockPos(2), 2), ForgeDirection.UP).isCanceled) loop.break()
         world.setBlock(blockPos(0), blockPos(1), blockPos(2), basalt, 0, 2)
         world.scheduleBlockUpdate(blockPos(0), blockPos(1), blockPos(2), basalt, 40 + world.rand.nextInt(41))
